@@ -16,7 +16,7 @@ while True:
         print("Invalid Input. Try again.\n")
 
 pdfFile = open(file_name, 'rb')
-pdf = break_password.PyPDF2.PdfReader(pdfFile) #PyPDF2 imported in thread_pwd.py, not imported again
+pdf = break_password.PyPDF3.PdfFileReader(pdfFile) #PyPDF2 imported in thread_pwd.py, not imported again
 
 if not pdf.is_encrypted:
     print("The selected pdf is not encrypted. No password needed.")
@@ -52,11 +52,11 @@ if choice == 2:
     except FileNotFoundError:
         print("There was no passwords file found!")
 
-async def run_tasks(future, top_pwd):
+async def run_tasks(top_pwd):
     tasks = []
     print('Creating Tasks...')
     for passw in top_pwd:
-        tasks.append(asyncio.create_task(break_password.run(future, passw, pdf)))
+        tasks.append(asyncio.create_task(break_password.run(passw, pdf)))
     print('All Tasks created, now it will run as soon as possible')
     await asyncio.wait(tasks)
     exit()
@@ -64,8 +64,7 @@ async def run_tasks(future, top_pwd):
 if len(top_pwd) > 0:
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    future = loop.create_future()
-    loop.run_until_complete(run_tasks(future, top_pwd))
+    loop.run_until_complete(run_tasks(top_pwd))
 
 def validCpf(cpf):
     numbers = [int(digit) for digit in cpf if digit.isdigit()]
@@ -77,19 +76,12 @@ def validCpf(cpf):
     expected_digit = (sum_of_products * 10 % 11) % 10
     return cpf + str(expected_digit)
 
-async def all_cpf_combinations(future, init, end):
-    tasks = []
-    print('Creating Tasks...')
-    for i in range(init, end):
+async def all_cpf_combinations():
+    for i in range(1, 9999999):
         gen_pwd = validCpf(str(i).zfill(9))
-        tasks.append(asyncio.create_task(break_password.run(future, gen_pwd, pdf)))
-    print('All Tasks created, now it will run as soon as possible')
-    await asyncio.wait(tasks)
+        break_password.run(gen_pwd, pdf)
 
-for i in range(0, 999):
-    init = 1 + (1000000 * i)
-    end = 1000000 + (1000000 * i)
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    future = loop.create_future()
-    loop.run_until_complete(all_cpf_combinations(future, init, end))
+async def envelop():
+    await all_cpf_combinations()
+
+asyncio.run(envelop())
