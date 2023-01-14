@@ -1,6 +1,7 @@
 import sys
 import break_password
 import asyncio
+from timing import *
 
 while True:
     try:
@@ -40,6 +41,8 @@ while True:
 
 top_pwd = []
 
+start = string_to_float(now())
+
 if choice == 2:
     try:
         pwd_file = open('passwords','r')
@@ -49,11 +52,11 @@ if choice == 2:
     except FileNotFoundError:
         print("There was no passwords file found!")
 
-async def run_tasks(top_pwd):
+async def run_tasks(future, top_pwd):
     tasks = []
     print('Creating Tasks...')
     for passw in top_pwd:
-        tasks.append(asyncio.create_task(break_password.run(passw, pdf)))
+        tasks.append(asyncio.create_task(break_password.run(future, passw, pdf)))
     print('All Tasks created, now it will run as soon as possible')
     await asyncio.wait(tasks)
     exit()
@@ -61,7 +64,8 @@ async def run_tasks(top_pwd):
 if len(top_pwd) > 0:
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    loop.run_until_complete(run_tasks(top_pwd))
+    future = loop.create_future()
+    loop.run_until_complete(run_tasks(future, top_pwd))
 
 def validCpf(cpf):
     numbers = [int(digit) for digit in cpf if digit.isdigit()]
@@ -73,18 +77,18 @@ def validCpf(cpf):
     expected_digit = (sum_of_products * 10 % 11) % 10
     return cpf + str(expected_digit)
 
-async def all_cpf_combinations():
+async def all_cpf_combinations(future):
     tasks = []
     print('Creating Tasks...')
     for i in range(1, 999999999):
         gen_pwd = validCpf(str(i).zfill(9))
-        tasks.append(asyncio.create_task(break_password.run(gen_pwd, pdf)))
+        tasks.append(asyncio.create_task(break_password.run(future, gen_pwd, pdf)))
         if i % 1000000 == 0:
             print('Created ' + str(i) + ' of 999999999 Tasks...')
     print('All Tasks created, now it will run as soon as possible')
     await asyncio.wait(tasks)
-    exit()
 
 loop = asyncio.new_event_loop()
 asyncio.set_event_loop(loop)
-loop.run_until_complete(all_cpf_combinations())
+future = loop.create_future()
+loop.run_until_complete(all_cpf_combinations(future))

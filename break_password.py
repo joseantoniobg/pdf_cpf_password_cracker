@@ -1,7 +1,7 @@
 import PyPDF2
 import asyncio
 
-async def run(pwd, pdf):
+async def run(future, pwd, pdf):
   if pwd == None:
       raise ValueError("No password to check")
   while True:
@@ -16,16 +16,8 @@ async def run(pwd, pdf):
       log_file = open('found_password_' + pwd + '.txt', 'w')
       log_file.write("Found pwd of " + pwd)
       log_file.close()
-      try:
-          raise FoundPwd(pwd)
-      except FoundPwd:
-          import sys
-          exc_info = sys.exc_info()
-          if exc_info:
-              return exc_info
+      future.set_result(pwd)
+      print(pwd +  ' : ' + str(decrypt_result))
+      exit()
   else:
     print(pwd +  ' : ' + str(decrypt_result))
-
-class FoundPwd(Exception):
-    def __init__(self, pwd):
-        self.pwd = pwd
