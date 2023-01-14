@@ -77,18 +77,19 @@ def validCpf(cpf):
     expected_digit = (sum_of_products * 10 % 11) % 10
     return cpf + str(expected_digit)
 
-async def all_cpf_combinations(future):
+async def all_cpf_combinations(future, init, end):
     tasks = []
     print('Creating Tasks...')
-    for i in range(1, 999999999):
+    for i in range(init, end):
         gen_pwd = validCpf(str(i).zfill(9))
         tasks.append(asyncio.create_task(break_password.run(future, gen_pwd, pdf)))
-        if i % 1000000 == 0:
-            print('Created ' + str(i) + ' of 999999999 Tasks...')
     print('All Tasks created, now it will run as soon as possible')
     await asyncio.wait(tasks)
 
-loop = asyncio.new_event_loop()
-asyncio.set_event_loop(loop)
-future = loop.create_future()
-loop.run_until_complete(all_cpf_combinations(future))
+for i in range(0, 999):
+    init = 1 + (1000000 * i)
+    end = 1000000 + (1000000 * i)
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    future = loop.create_future()
+    loop.run_until_complete(all_cpf_combinations(future, init, end))
