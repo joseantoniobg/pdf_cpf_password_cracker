@@ -1,7 +1,6 @@
 import sys
 import break_password
 import asyncio
-from timing import *
 from cpf_helpers import generateCpfValidationDigits
 
 """
@@ -74,10 +73,9 @@ if choice == 1:
 
 top_pwd = []
 
-start = string_to_float(now())
-
 ### CASO TENHA ESCOLHIDO A OPCAO 2, VERIFICA A EXISTENCIA DO ARQUIVO COM OS CPFS ###
 ####################################################################################
+from timing import *
 
 if choice == 2:
     try:

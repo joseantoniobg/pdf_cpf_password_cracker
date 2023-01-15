@@ -29,7 +29,7 @@ def endlog():
     log("End Program", secondsToStr(elapsed))
 
 def now():
-    return secondsToStr(perf_counter())
+    return secondsToStr(perf_counter() - start)
 
 
 ##############################
@@ -66,7 +66,6 @@ def float_to_str(t):
     to_return = str(hours) + ":" + str(minutes) + ":" + str(seconds) + ":" + str(decimal)
 
     return to_return
-
 
 start = perf_counter()
 atexit.register(endlog)
