@@ -1,5 +1,5 @@
 import PyPDF3
-import pikepdf
+# import pikepdf
 import fitz
 
 """
@@ -21,6 +21,7 @@ def run(pwd, pdf):
       log_file = open('found_password_' + pwd + '.txt', 'w')
       log_file.write("Found pwd of " + pwd)
       log_file.close()
+      print('Found password: ' + pwd)
       exit()
 
 ### Pikepdf ###
