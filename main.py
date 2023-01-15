@@ -2,6 +2,7 @@ import sys
 import break_password
 import asyncio
 from timing import *
+from cpf_helpers import generateCpfValidationDigits
 
 """
     Esse projeto é uma refatoração e adaptação a partir do projeto pdf_crack de Oath93
@@ -80,23 +81,13 @@ async def envelop_passwords():
 if len(top_pwd) > 0:
     asyncio.run(envelop_passwords())
 
-def validCpf(cpf):
-    numbers = [int(digit) for digit in cpf if digit.isdigit()]
-    sum_of_products = sum(a*b for a, b in zip(numbers[0:9], range(10, 1, -1)))
-    expected_digit = (sum_of_products * 10 % 11) % 10
-    numbers.append(expected_digit)
-    cpf = cpf + str(expected_digit)
-    sum_of_products = sum(a*b for a, b in zip(numbers[0:10], range(11, 1, -1)))
-    expected_digit = (sum_of_products * 10 % 11) % 10
-    return cpf + str(expected_digit)
-
 ### SE ESCOLHEU A OPCAO 1, VAI TENTAR COM TODAS AS COMBINACOES POSSIVEIS, O QUE PODE DEMORAR TEMPO CONSIDERAVEL ###
 ###################################################################################################################
 
 async def all_cpf_combinations():
     i = 1
     while i <= 999999999:
-        gen_pwd = validCpf(str(i).zfill(9))
+        gen_pwd = generateCpfValidationDigits(str(i).zfill(9))
         break_password.run(gen_pwd, file_name)
         i+=1
         if i % 10000 == 0:
