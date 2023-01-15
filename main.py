@@ -18,7 +18,7 @@ while True:
 pdfFile = open(file_name, 'rb')
 pdf = break_password.PyPDF3.PdfFileReader(pdfFile) #PyPDF2 imported in thread_pwd.py, not imported again
 
-if not pdf.is_encrypted:
+if not pdf.isEncrypted:
     print("The selected pdf is not encrypted. No password needed.")
     sys.exit()
 
@@ -53,18 +53,16 @@ if choice == 2:
         print("There was no passwords file found!")
 
 async def run_tasks(top_pwd):
-    tasks = []
-    print('Creating Tasks...')
     for passw in top_pwd:
-        tasks.append(asyncio.create_task(break_password.run(passw, pdf)))
-    print('All Tasks created, now it will run as soon as possible')
-    await asyncio.wait(tasks)
+       break_password.run(passw, file_name)
+
+async def envelop_passwords():
+    await run_tasks(top_pwd)
     exit()
 
 if len(top_pwd) > 0:
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    loop.run_until_complete(run_tasks(top_pwd))
+    asyncio.run(envelop_passwords())
+    exit()
 
 def validCpf(cpf):
     numbers = [int(digit) for digit in cpf if digit.isdigit()]
@@ -77,9 +75,13 @@ def validCpf(cpf):
     return cpf + str(expected_digit)
 
 async def all_cpf_combinations():
-    for i in range(1, 9999999):
+    i = 1
+    while i <= 999999999:
         gen_pwd = validCpf(str(i).zfill(9))
-        break_password.run(gen_pwd, pdf)
+        break_password.run(gen_pwd, file_name)
+        i+=1
+        if i % 10000 == 0:
+            print('Tryed ' + str(i) + ' combinations = ' + now())
 
 async def envelop():
     await all_cpf_combinations()
