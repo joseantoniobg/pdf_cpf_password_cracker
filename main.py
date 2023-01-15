@@ -54,11 +54,11 @@ while True:
 if choice == 1:
     while True:
         try:
-            initial_combination = int(input("Enter the initial combination. Example, if you want to start by 001000001, type 1000001"))
+            initial_combination = int(input("Enter the initial combination. Example, if you want to start by 001000001, type 1000001: "))
             if initial_combination < 1 or initial_combination > 999999999:
                 print("Invalid input, try from 1 to 999999999")
                 continue
-            final_combination = int(input("Enter the initial combination. Example, if you want to and by 991000001, type 991000001"))
+            final_combination = int(input("Enter the initial combination. Example, if you want to and by 991000001, type 991000001: "))
             if final_combination < initial_combination:
                 print("Final Combination needs to be at least equal to initial combination")
                 continue
@@ -112,7 +112,7 @@ async def all_cpf_combinations():
         break_password.run(gen_pwd, file_name)
         i+=1
         if i % 10000 == 0:
-            print('Tryed ' + str(i) + ' combinations = ' + now())
+            print('Tried ' + str(i) + ' combinations = ' + now())
 
 async def envelop():
     await all_cpf_combinations()
