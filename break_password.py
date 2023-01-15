@@ -2,6 +2,18 @@ import PyPDF3
 import pikepdf
 import fitz
 
+"""
+  Por questões de performance, foram testadas 3 bibliotecas para realizar a decodificacao do PDF:
+  - PyPDF3
+  - pikepdf
+  - MyMuPDF
+
+  As duas primeiras tiveram desempenho similar, demorando cerca de 3 minutos num teste controlado
+  Já a MyMuPDF demorou menos de 1 minuto e meio no mesmo teste, então ela foi mantida por ser mais performática
+"""
+
+### MyMuPDF ###
+###############
 def run(pwd, pdf):
   with open(pdf, 'r+') as doc1:
     doc = fitz.Document(doc1)
@@ -11,6 +23,8 @@ def run(pwd, pdf):
       log_file.close()
       exit()
 
+### Pikepdf ###
+###############
 """def run(pwd, pdf):
   try:
     with pikepdf.open(pdf, password = pwd):
@@ -21,6 +35,8 @@ def run(pwd, pdf):
   except pikepdf._qpdf.PasswordError as e:
     print(pwd)"""
 
+### PyPDF3 ###
+##############
 """def run(pwd, pdf):
     decrypt_result = pdf.decrypt(pwd)
     print(pwd)

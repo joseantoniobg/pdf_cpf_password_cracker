@@ -3,6 +3,14 @@ import break_password
 import asyncio
 from timing import *
 
+"""
+    Esse projeto é uma refatoração e adaptação a partir do projeto pdf_crack de Oath93
+    https://github.com/oath93/pdf_crack
+"""
+
+### RECEBE O NOME DO ARQUIVO, QUE DEVE ESTAR NO MESMO DIRETORIO DO PROJETO ###
+##############################################################################
+
 while True:
     try:
         file_name = input("Enter a file name located in the same directory.")
@@ -16,11 +24,14 @@ while True:
         print("Invalid Input. Try again.\n")
 
 pdfFile = open(file_name, 'rb')
-pdf = break_password.PyPDF3.PdfFileReader(pdfFile) #PyPDF2 imported in thread_pwd.py, not imported again
+pdf = break_password.PyPDF3.PdfFileReader(pdfFile)
 
 if not pdf.isEncrypted:
     print("The selected pdf is not encrypted. No password needed.")
     sys.exit()
+
+### ESCOLHE SE QUER TENTAR DA LISTA DE CPFS OU COM TODAS AS COMBINACOES POSSIVEIS ###
+#####################################################################################
 
 while True:
     try:
@@ -43,6 +54,9 @@ top_pwd = []
 
 start = string_to_float(now())
 
+### CASO TENHA ESCOLHIDO A OPCAO 2, VERIFICA A EXISTENCIA DO ARQUIVO COM OS CPFS ###
+####################################################################################
+
 if choice == 2:
     try:
         pwd_file = open('passwords','r')
@@ -60,9 +74,11 @@ async def envelop_passwords():
     await run_tasks(top_pwd)
     exit()
 
+### CASO TENHA ESCOLHIDO A OPCAO 2, TENTA ACHAR O CPF VALIDO NA LISTA, E EM SEGUIDA ENCERRA A APLICACAO ###
+###########################################################################################################
+
 if len(top_pwd) > 0:
     asyncio.run(envelop_passwords())
-    exit()
 
 def validCpf(cpf):
     numbers = [int(digit) for digit in cpf if digit.isdigit()]
@@ -73,6 +89,9 @@ def validCpf(cpf):
     sum_of_products = sum(a*b for a, b in zip(numbers[0:10], range(11, 1, -1)))
     expected_digit = (sum_of_products * 10 % 11) % 10
     return cpf + str(expected_digit)
+
+### SE ESCOLHEU A OPCAO 1, VAI TENTAR COM TODAS AS COMBINACOES POSSIVEIS, O QUE PODE DEMORAR TEMPO CONSIDERAVEL ###
+###################################################################################################################
 
 async def all_cpf_combinations():
     i = 1
