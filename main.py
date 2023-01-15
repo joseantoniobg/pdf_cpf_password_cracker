@@ -51,6 +51,27 @@ while True:
         continue
     break
 
+if choice == 1:
+    while True:
+        try:
+            initial_combination = int(input("Enter the initial combination. Example, if you want to start by 001000001, type 1000001"))
+            if initial_combination < 1 or initial_combination > 999999999:
+                print("Invalid input, try from 1 to 999999999")
+                continue
+            final_combination = int(input("Enter the initial combination. Example, if you want to and by 991000001, type 991000001"))
+            if final_combination < initial_combination:
+                print("Final Combination needs to be at least equal to initial combination")
+                continue
+            if final_combination < 1 or final_combination > 999999999:
+                print("Invalid input, try from 1 to 999999999")
+                continue
+            break
+        except NameError:
+            print("You must enter a value!")
+            continue
+        except ValueError:
+            print("Invalid Input. Try again.\n")
+
 top_pwd = []
 
 start = string_to_float(now())
@@ -85,8 +106,8 @@ if len(top_pwd) > 0:
 ###################################################################################################################
 
 async def all_cpf_combinations():
-    i = 1
-    while i <= 999999999:
+    i = initial_combination
+    while i <= final_combination:
         gen_pwd = generateCpfValidationDigits(str(i).zfill(9))
         break_password.run(gen_pwd, file_name)
         i+=1
